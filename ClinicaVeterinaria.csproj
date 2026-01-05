@@ -18,7 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Models\" />
+    <Folder Include="Controllers\" />
+    <Folder Include="Models\Dtos\" />
   </ItemGroup>
 
 </Project>
