@@ -13,7 +13,7 @@ namespace ClinicaVeterinaria.Models.Entities
         public string NomeCassetto { get; set; } = string.Empty;
 
         [ForeignKey(nameof(NomeCassetto))]
-        public Cassetto Cassetto { get; set; } = new();
+        public Cassetto? Cassetto { get; set; }
 
         public ICollection<Vendita>? Vendite { get; set; }
     }

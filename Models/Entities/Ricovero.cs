@@ -16,7 +16,7 @@ namespace ClinicaVeterinaria.Models.Entities
         public Guid AnagraficaAnimaleId { get; set; }
 
         [ForeignKey(nameof(AnagraficaAnimaleId))]
-        public AnagraficaAnimale AnagraficaAnimale { get; set; } = new();
+        public AnagraficaAnimale? AnagraficaAnimale { get; set; }
 
         public bool IsHospitalized { get; set; }
 

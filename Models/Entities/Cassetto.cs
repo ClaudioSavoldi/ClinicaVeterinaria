@@ -9,6 +9,6 @@ namespace ClinicaVeterinaria.Models.Entities
 
         public string NomeArmadiettoId { get; set; } = string.Empty;
 
-        public Armadietto Armadietto { get; set; } = new();
+        public Armadietto? Armadietto { get; set; }
     }
 }

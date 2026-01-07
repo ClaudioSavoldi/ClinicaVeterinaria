@@ -12,12 +12,12 @@ namespace ClinicaVeterinaria.Models.Entities
         public string CodiceFiscale { get; set; } = string.Empty;
 
         [ForeignKey(nameof(CodiceFiscale))]
-        public Proprietario Proprietario { get; set; } = new();
+        public Proprietario? Proprietario { get; set; }
 
         public string NomeProdotto { get; set; } = string.Empty;
 
         [ForeignKey(nameof(NomeProdotto))]
-        public Prodotto Prodotto { get; set; } = new();
+        public Prodotto? Prodotto { get; set; }
 
         public int? NumeroRicetta { get; set; }
 

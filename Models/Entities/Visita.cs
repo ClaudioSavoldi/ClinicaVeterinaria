@@ -13,6 +13,6 @@ namespace ClinicaVeterinaria.Models.Entities
         public string DescrizioneCura { get; set; } = string.Empty;
         public Guid AnimaleId { get; set; }
         [ForeignKey(nameof(AnimaleId))]
-        public AnagraficaAnimale AnagraficaAnimale { get; set; } = new();
+        public AnagraficaAnimale? AnagraficaAnimale { get; set; }
     }
 }
