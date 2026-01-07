@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClinicaVeterinaria.Models.Entities
 {
@@ -8,28 +9,16 @@ namespace ClinicaVeterinaria.Models.Entities
         [Key]
         public Guid RicoveroId { get; set; }
 
-        [Required]
-        public DateTime DataInizioRicovero { get; set; }
+        public DateTime DataInizioRicovero { get; set; } = DateTime.UtcNow;
 
-        [Required]
-        [MaxLength(100)]
-        public string Nome { get; set; }
+        public string DescrizioneAnimale { get; set; } = string.Empty;
 
-        [Required]
-        [MaxLength(50)]
-        public string Tipologia { get; set; }
+        public Guid AnagraficaAnimaleId { get; set; }
 
-        [Required]
-        public DateTime? DataNascita { get; set; }
+        [ForeignKey(nameof(AnagraficaAnimaleId))]
+        public AnagraficaAnimale AnagraficaAnimale { get; set; } = new();
 
-        [Required]
-        public bool PresenzaMicrochip { get; set; }
-
-        public int? NumeroMicrochip { get; set; }
-
-        [Required]
-        [MaxLength(100)]
-        public string DescrizioneAnimale { get; set; }
+        public bool IsHospitalized { get; set; }
 
     }
 }

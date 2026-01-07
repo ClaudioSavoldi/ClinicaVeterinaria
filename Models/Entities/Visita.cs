@@ -8,11 +8,11 @@ namespace ClinicaVeterinaria.Models.Entities
     {
         [Key]
         public Guid VisitaId { get; set; }
-        public string EsameObiettivo { get; set; }
-        public string DescrizioneCura { get; set; }
+        public DateTime DataVisita { get; set; } = DateTime.UtcNow;
+        public string EsameObiettivo { get; set; } = string.Empty;
+        public string DescrizioneCura { get; set; } = string.Empty;
         public Guid AnimaleId { get; set; }
-        [Required]
         [ForeignKey(nameof(AnimaleId))]
-        public AnagraficaAnimale AnagraficaAnimale { get; set; }
+        public AnagraficaAnimale AnagraficaAnimale { get; set; } = new();
     }
 }

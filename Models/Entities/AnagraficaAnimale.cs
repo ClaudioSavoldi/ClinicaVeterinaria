@@ -10,39 +10,33 @@ namespace ClinicaVeterinaria.Models.Entities
         [Key]
         public Guid AnimaleId { get; set; }
 
-        [Required]
-        public DateTime DataRegistrazione { get; set; }
+        public DateTime DataRegistrazione { get; set; } = DateTime.UtcNow;
 
-        [Required]
         [MaxLength(100)]
-        public string Nome { get; set; }
+        public string Nome { get; set; } = string.Empty;
 
-        [Required]
+
         [MaxLength(50)]
-        public string Tipologia { get; set; }
+        public string Tipologia { get; set; } = string.Empty;
 
-        [Required]
         [MaxLength(50)]
-        public string ColoreMantello { get; set; }
+        public string ColoreMantello { get; set; } = string.Empty;
 
-        [Required]
-        public DateTime DataNascita { get; set; }
+        public DateOnly DataNascita { get; set; }
 
-        [Required]
         public bool PresenzaMicrochip { get; set; }
 
+        [MaxLength(15)]
         public int? NumeroMicrochip { get; set; }
 
-        [Required]
-        [MaxLength(100)]
-        public string NomeCognomeProprietario { get; set; }
+        [MaxLength(16)]
+        public string CodiceFiscale { get; set; } = string.Empty;
+
+        [ForeignKey(nameof(CodiceFiscale))]
+        public Proprietario Proprietario { get; set; } = new();
 
         public ICollection<Visita>? Visite { get; set; }
 
-        public Guid ProprietarioId { get; set; }
-        [Required]
-        [ForeignKey(nameof(ProprietarioId))]
-        public Proprietario Proprietario { get; set; }
 
     }
 }

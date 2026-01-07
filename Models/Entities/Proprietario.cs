@@ -1,11 +1,19 @@
-﻿namespace ClinicaVeterinaria.Models.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ClinicaVeterinaria.Models.Entities
 {
     public class Proprietario
     {
-        public Guid ProprietarioId { get; set; }
-        public string  NomeCompleto { get; set; }
-        public string CodiceFiscale { get; set; }
+        [Key]
+        [MaxLength(16)]
+        public string CodiceFiscale { get; set; } = string.Empty;
+
+        public string Nome { get; set; } = string.Empty;
+
+        public string Cognome { get; set; } = string.Empty;
+
         public ICollection<AnagraficaAnimale>? AnagraficheAnimali { get; set; }
-      //  public ICollection<Vendita>? Vendite { get; set; }
+
+        public ICollection<Vendita>? Vendite { get; set; }
     }
 }

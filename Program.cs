@@ -1,11 +1,121 @@
+using ClinicaVeterinaria.Data;
+using ClinicaVeterinaria.Exceptions;
+using ClinicaVeterinaria.Helpers;
+using ClinicaVeterinaria.Models.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Serilog;
+using System.Text;
+
 var builder = WebApplication.CreateBuilder(args);
+
+//Configurazione di Serilog per il logging
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+Log.Information("Registering services...");
+
+//Aggiunta di Serilog come provider di logging
+builder.Services.AddSerilog();
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+//Stringa di connessione al database, impostata nel file appsettings.json
+string connectionString = string.Empty;
+
+//try catch per gestire l'eventuale assenza della stringa di connessione
+try
+{
+    connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new Exception("Stringa di connessione non trovata");
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex.Message);
+    await Log.CloseAndFlushAsync();
+    Environment.Exit(1);
+}
+
+//dependency injection del contesto del database
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString)
+);
+
+//Configurazione dell'autenticazione JWT impostata nel file appsettings.json
+var jwt = builder.Configuration.GetSection("Jwt");
+
+//Aggiunta del servizio di autenticazione JWT
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwt["Issuer"],
+            ValidAudience = jwt["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwt["Key"]!))
+        };
+    });
+
+//Configurazione di Identity per la gestione degli utenti
+builder.Services.AddIdentityCore<ApplicationUser>(option =>
+{
+    option.SignIn.RequireConfirmedPhoneNumber = false;
+    option.SignIn.RequireConfirmedEmail = false;
+    option.SignIn.RequireConfirmedAccount = false;
+    option.Password.RequiredLength = 8;
+    option.Password.RequireDigit = false;
+    option.Password.RequireUppercase = true;
+    option.Password.RequireLowercase = true;
+    option.Password.RequireNonAlphanumeric = false;
+    option.User.RequireUniqueEmail = true;
+})
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddSignInManager<SignInManager<ApplicationUser>>();
+
+//Qui da aggiungere le future dipendenze dei servizi
+//ADDSCOPED 
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Configurazione di Swagger per la documentazione delle API e l'autenticazione JWT
+builder.Services.AddSwaggerGen(option =>
+{
+    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer"
+    });
+
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+
+    });
+
+});
 
 var app = builder.Build();
 
@@ -14,12 +124,38 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    //Inizializzazione del database in ambiente di sviluppo
+    try
+    {
+        await DbHelper.InitializeDatabaseAsync<ApplicationDbContext>(app);
+    }
+    catch (DbInizializationException ex)
+    {
+        Log.Fatal(ex.Message);
+        await Log.CloseAndFlushAsync();
+        Environment.Exit(1);
+
+    }
+    catch (Exception ex)
+    {
+        Log.Fatal(ex.Message);
+        await Log.CloseAndFlushAsync();
+        Environment.Exit(1);
+    }
+
 }
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
+
+
+//Esecuzione dell'applicazione con logging dell'avvio dell'applicazione stesso
+Log.Information("Running application...");
 
 app.Run();
