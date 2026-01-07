@@ -2,6 +2,7 @@ using ClinicaVeterinaria.Data;
 using ClinicaVeterinaria.Exceptions;
 using ClinicaVeterinaria.Helpers;
 using ClinicaVeterinaria.Models.Entities;
+using ClinicaVeterinaria.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -84,7 +85,8 @@ builder.Services.AddIdentityCore<ApplicationUser>(option =>
     .AddSignInManager<SignInManager<ApplicationUser>>();
 
 //Qui da aggiungere le future dipendenze dei servizi
-//ADDSCOPED 
+builder.Services.AddScoped<JwtTokenService>();
+builder.Services.AddScoped<AuthService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

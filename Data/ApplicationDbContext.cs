@@ -16,5 +16,7 @@ namespace ClinicaVeterinaria.Data
         public DbSet<Armadietto> Armadietti { get; set; }
         public DbSet<Cassetto> Cassetti { get; set; }
         public DbSet<Vendita> Vendite { get; set; }
+
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }
