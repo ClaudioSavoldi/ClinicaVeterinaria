@@ -91,6 +91,8 @@ builder.Services.AddScoped<ProprietarioService>();
 builder.Services.AddScoped<AnimaleService>();
 builder.Services.AddScoped<VisitaService>();
 builder.Services.AddScoped<RicoveroService>();
+builder.Services.AddScoped<ProdottoService>();
+builder.Services.AddScoped<VenditaService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -71,6 +71,21 @@ namespace ClinicaVeterinaria.Services
             };
         }
 
+        //ricerca animale ricoverato per numero del microchip
+        public async Task<ResponseAnimaleByMicrochip> GetAnimaleRicoveratoByChip(int microchip)
+        {
+            return await _context.Ricoveri
+                .AsNoTracking()
+                .Where(r => r.AnagraficaAnimale.PresenzaMicrochip == true)
+                .Where(r => r.AnagraficaAnimale.NumeroMicrochip == microchip)
+                .Select(r => new ResponseAnimaleByMicrochip
+                {
+                    IsSuccess = true,
+                    DescrizioneAnimale = $"{r.AnagraficaAnimale.Nome}, {r.AnagraficaAnimale.ColoreMantello}, {r.DescrizioneAnimale}",
+                })
+                .FirstOrDefaultAsync();
+        }
+
         //creazione di un ricovero
         public async Task<bool> CreateRicovero(RequestCreateRicoveroDto request)
         {

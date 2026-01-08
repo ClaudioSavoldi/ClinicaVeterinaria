@@ -1,4 +1,5 @@
-﻿using ClinicaVeterinaria.Exceptions;
+﻿using ClinicaVeterinaria.Data;
+using ClinicaVeterinaria.Exceptions;
 using ClinicaVeterinaria.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ namespace ClinicaVeterinaria.Helpers
                 await RunMigrationAsync<T>(services);
                 await SeedRoles(services);
                 await SeedAdmin(services);
+                await SeedArmadiCassetti(services);
             }
             catch
             {
@@ -162,6 +164,50 @@ namespace ClinicaVeterinaria.Helpers
                         throw new DbInizializationException("Errore durante l'assegnamento del ruolo all'utente");
                     }
                 }
+
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+
+        //metodo per il seeding degli armadi e dei cassetti
+        private static async Task SeedArmadiCassetti(IServiceProvider services)
+        {
+            try
+            {
+                using var scope = services.CreateAsyncScope();
+
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                if (!await db.Armadietti.AnyAsync())
+                {
+                    db.Armadietti.AddRange(
+                        new Armadietto { NomeArmadietto = "Alimentari" },
+                        new Armadietto { NomeArmadietto = "Medicinali" }
+                        );
+                }
+
+
+                if (!await db.Cassetti.AnyAsync())
+                {
+                    db.Cassetti.AddRange(
+                        new Cassetto { NomeCassetto = "Alimentari1", NomeArmadiettoId = "Alimentari" },
+                        new Cassetto { NomeCassetto = "Alimentari2", NomeArmadiettoId = "Alimentari" },
+                        new Cassetto { NomeCassetto = "Alimentari3", NomeArmadiettoId = "Alimentari" },
+                        new Cassetto { NomeCassetto = "Alimentari4", NomeArmadiettoId = "Alimentari" },
+                        new Cassetto { NomeCassetto = "Alimentari5", NomeArmadiettoId = "Alimentari" },
+                        new Cassetto { NomeCassetto = "Medicinali1", NomeArmadiettoId = "Medicinali" },
+                        new Cassetto { NomeCassetto = "Medicinali2", NomeArmadiettoId = "Medicinali" },
+                        new Cassetto { NomeCassetto = "Medicinali3", NomeArmadiettoId = "Medicinali" },
+                        new Cassetto { NomeCassetto = "Medicinali4", NomeArmadiettoId = "Medicinali" },
+                        new Cassetto { NomeCassetto = "Medicinali5", NomeArmadiettoId = "Medicinali" }
+                        );
+                }
+
+                await db.SaveChangesAsync();
 
             }
             catch

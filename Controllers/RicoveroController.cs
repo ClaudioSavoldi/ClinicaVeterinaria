@@ -80,6 +80,22 @@ namespace ClinicaVeterinaria.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpGet("GetAnimaleByChip")]
+        public async Task<IActionResult> GetAnimaleByChip(int microChip)
+        {
+            var animaleChip = await _ricoveroService.GetAnimaleRicoveratoByChip(microChip);
+
+            if (animaleChip == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(animaleChip);
+            }
+        }
+
         [HttpPost("CreateRicovero")]
         public async Task<IActionResult> CreateRicovero(RequestCreateRicoveroDto requestRicovero)
         {
