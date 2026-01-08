@@ -88,7 +88,9 @@ builder.Services.AddIdentityCore<ApplicationUser>(option =>
 builder.Services.AddScoped<JwtTokenService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ProprietarioService>();
-builder.Services.AddScoped<AnimaliService>();
+builder.Services.AddScoped<AnimaleService>();
+builder.Services.AddScoped<VisitaService>();
+builder.Services.AddScoped<RicoveroService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

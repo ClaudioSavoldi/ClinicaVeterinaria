@@ -6,18 +6,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicaVeterinaria.Services
 {
-    public class AnimaliService : ServiceBase
+    public class AnimaleService : ServiceBase
     {
 
-        public AnimaliService(ApplicationDbContext applicationDbContext) : base(applicationDbContext) { }
+        public AnimaleService(ApplicationDbContext applicationDbContext) : base(applicationDbContext) { }
 
         //lista di animale
         public async Task<List<AnimaleResponseDto>> GetAllAnimals()
         {
             return await _context.AnagraficheAnimali
                 .AsNoTracking()
+                .Where(a => a.CodiceFiscale != null)
                 .OrderByDescending(a => a.DataRegistrazione)
-                .Include(v => v.Proprietario)
+                //.Include(v => v.Proprietario)
                 .Select(a => new AnimaleResponseDto
                 {
                     AnimaleId = a.AnimaleId,
@@ -31,6 +32,33 @@ namespace ClinicaVeterinaria.Services
                     CodiceFiscale = a.Proprietario.CodiceFiscale,
                     VisiteId = a.Visite
                     .Select(v => v.VisitaId)
+                    .ToList(),
+                    RicoveriId = a.Ricoveri
+                    .Select(r => r.RicoveroId)
+                    .ToList()
+                })
+                .ToListAsync();
+        }
+
+
+        //lista di animale ricoverati senza data di nascita e proprietario
+        public async Task<List<AnimaleNoProprietarioResponseDto>> GetAllAnimaleSenzaProprietario()
+        {
+            return await _context.AnagraficheAnimali
+                .AsNoTracking()
+                .Where(a => a.CodiceFiscale == null)
+                .OrderByDescending(a => a.DataRegistrazione)
+                .Select(a => new AnimaleNoProprietarioResponseDto
+                {
+                    AnimaleId = a.AnimaleId,
+                    DataRegistrazione = a.DataRegistrazione,
+                    Nome = a.Nome,
+                    Tipologia = a.Tipologia,
+                    ColoreMantello = a.ColoreMantello,
+                    PresenzaMicrochip = a.PresenzaMicrochip,
+                    NumeroMicrochip = a.NumeroMicrochip,
+                    RicoveriId = a.Ricoveri
+                    .Select(r => r.RicoveroId)
                     .ToList()
                 })
                 .ToListAsync();
@@ -57,6 +85,24 @@ namespace ClinicaVeterinaria.Services
                 PresenzaMicrochip = animaleRequestDto.PresenzaMicrochip,
                 NumeroMicrochip = animaleRequestDto.NumeroMicrochip,
                 CodiceFiscale = animaleRequestDto.CodiceFiscale
+            };
+
+            _context.AnagraficheAnimali.Add(Animale);
+
+            return await SaveAsync();
+        }
+
+        //creazione animale per ricovero, senza data di nascita e relazione al proprietario
+        public async Task<bool> CreateAnimalePerRicovero(RequestAnimaleNoPoprietario animaleRequestDto)
+        {
+            var Animale = new AnagraficaAnimale
+            {
+                AnimaleId = Guid.NewGuid(),
+                Nome = animaleRequestDto.Nome,
+                Tipologia = animaleRequestDto.Tipologia,
+                ColoreMantello = animaleRequestDto.ColoreMantello,
+                PresenzaMicrochip = animaleRequestDto.PresenzaMicrochip,
+                NumeroMicrochip = animaleRequestDto.NumeroMicrochip,
             };
 
             _context.AnagraficheAnimali.Add(Animale);

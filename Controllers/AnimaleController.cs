@@ -12,17 +12,30 @@ namespace ClinicaVeterinaria.Controllers
     public class AnimaleController : ControllerBase
     {
 
-        private readonly AnimaliService _animaliService;
+        private readonly AnimaleService _animaliService;
 
-        public AnimaleController(AnimaliService animaliService)
+        public AnimaleController(AnimaleService animaliService)
         {
             _animaliService = animaliService;
         }
 
-        [HttpGet("GetAllAnimali")]
-        public async Task<IActionResult> GetAllAnimali()
+        [HttpGet("GetAnimaliConProprietario")]
+        public async Task<IActionResult> GetAnimaliProprietario()
         {
             var animali = await _animaliService.GetAllAnimals();
+
+            if (animali == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(animali);
+        }
+
+        [HttpGet("GetAnimaliSenzaProprietario")]
+        public async Task<IActionResult> GetAnimaliSenzaProprietario()
+        {
+            var animali = await _animaliService.GetAllAnimaleSenzaProprietario();
 
             if (animali == null)
             {
@@ -55,6 +68,27 @@ namespace ClinicaVeterinaria.Controllers
             }
 
             var IsCreated = await _animaliService.CreateAnimale(animale);
+
+            if (IsCreated)
+            {
+                return Ok(new { Message = "Animale registrato con successo" });
+            }
+            else
+            {
+                return BadRequest(new { Message = "Errore durante la registrazione" });
+            }
+
+        }
+
+        [HttpPost("createAnimaleRicovero")]
+        public async Task<IActionResult> CreateAnimaleRicovero(RequestAnimaleNoPoprietario animale)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var IsCreated = await _animaliService.CreateAnimalePerRicovero(animale);
 
             if (IsCreated)
             {

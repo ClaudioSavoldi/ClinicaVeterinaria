@@ -1,8 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace ClinicaVeterinaria.Models.DTOs.Response.AnimaleResponse
+﻿namespace ClinicaVeterinaria.Models.DTOs.Response.AnimaleResponse
 {
-    public class AnimaleResponseDto
+    public class AnimaleNoProprietarioResponseDto
     {
         public Guid AnimaleId { get; set; }
 
@@ -14,15 +12,10 @@ namespace ClinicaVeterinaria.Models.DTOs.Response.AnimaleResponse
 
         public string ColoreMantello { get; set; } = string.Empty;
 
-        public DateOnly DataNascita { get; set; }
-
         public bool PresenzaMicrochip { get; set; }
 
         public int? NumeroMicrochip { get; set; }
 
-        public string CodiceFiscale { get; set; } = string.Empty;
-
-        public List<Guid> VisiteId { get; set; }
         public List<Guid> RicoveriId { get; set; }
     }
 }

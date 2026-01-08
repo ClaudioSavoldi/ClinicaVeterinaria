@@ -30,12 +30,14 @@ namespace ClinicaVeterinaria.Models.Entities
         public int? NumeroMicrochip { get; set; }
 
         [MaxLength(16)]
-        public string CodiceFiscale { get; set; } = string.Empty;
+        public string? CodiceFiscale { get; set; }
 
         [ForeignKey(nameof(CodiceFiscale))]
         public Proprietario? Proprietario { get; set; }
 
         public ICollection<Visita>? Visite { get; set; }
+
+        public ICollection<Ricovero>? Ricoveri { get; set; }
 
 
     }
